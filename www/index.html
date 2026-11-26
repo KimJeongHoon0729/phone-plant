@@ -78,11 +78,23 @@
     </section>
   </main>
 
+  <!-- 홈 화면에 추가 안내 -->
+  <div id="install" class="install hidden">
+    <img src="icons/icon-192.png" alt="">
+    <div class="install-text">
+      <b>홈 화면에 추가하기</b>
+      <span id="install-desc">앱처럼 바로 열 수 있어요</span>
+    </div>
+    <button id="btn-install" class="install-btn">추가</button>
+    <button id="btn-install-close" class="install-close" aria-label="닫기">✕</button>
+  </div>
+
   <div id="dim" class="dim hidden"></div>
   <div id="fx" class="fx"></div>
 
   <script src="plant.js"></script>
   <script src="storage.js"></script>
   <script src="app.js"></script>
+  <script src="install.js"></script>
 </body>
 </html>
