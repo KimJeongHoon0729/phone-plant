@@ -2,7 +2,8 @@
 // 흐름: 시작 → 폰을 엎으면 시간이 쌓이고 식물이 자람 → 목표 시간 도달하면 꽃 핌(성공)
 //       중간에 폰을 들면 5초 안에 다시 엎어야 함, 못 하면 시듦(실패)
 
-const GRACE_SECONDS = 5;      // 폰을 들었을 때 다시 엎을 때까지 기다려주는 시간
+const GRACE_SECONDS = 5;          // 폰을 들었을 때 다시 엎을 때까지 기다려주는 시간
+const RETURN_GRACE_SECONDS = 10;  // 꺼진 화면을 다시 켰을 때 (잠금 해제 시간 포함)
 const $ = id => document.getElementById(id);
 
 let goalMin = 30;
@@ -10,6 +11,22 @@ let session = null;  // 진행 중인 회차 정보
 let faceDown = false;
 let sensorWorks = false;
 let tickTimer = null;
+let wakeLock = null;
+
+// ---------- 화면 켜둠 유지 ----------
+// 웹앱은 화면이 꺼지면 센서와 타이머가 멈춰요. 그래서 키우는 동안은 화면이 자동으로
+// 꺼지지 않게 하고, 대신 엎어두면 화면을 까맣게 바꿔서 배터리를 아껴요.
+async function keepAwake() {
+  try {
+    if ('wakeLock' in navigator && !wakeLock && document.visibilityState === 'visible') {
+      wakeLock = await navigator.wakeLock.request('screen');
+      wakeLock.addEventListener('release', () => { wakeLock = null; });
+    }
+  } catch (e) { /* 지원하지 않는 기기면 그냥 넘어가요 */ }
+}
+function releaseAwake() {
+  if (wakeLock) { wakeLock.release().catch(() => {}); wakeLock = null; }
+}
 
 // ---------- 화면 전환 ----------
 function show(name) {
@@ -74,6 +91,7 @@ function startSession() {
   };
   Store.saveSession(session);
   show('grow');
+  keepAwake();
   render();
   clearInterval(tickTimer);
   tickTimer = setInterval(tick, 250);
@@ -107,6 +125,8 @@ function tick() {
 
 function finish(success) {
   clearInterval(tickTimer);
+  releaseAwake();
+  $('dim').classList.add('hidden');
   const minutes = Math.floor(Math.min(session.grownMs, session.goalMs) / 60000);
   Store.addResult(success ? session.goalMin : minutes, success);
   Store.clearSession();
@@ -127,15 +147,17 @@ function render() {
   if (!session) return;
   const p = session.grownMs / session.goalMs;
   drawPlant($('plant'), p, false);
+  // 엎어져 있는 동안은 화면을 까맣게 (OLED 화면 배터리 절약)
+  $('dim').classList.toggle('hidden', !(faceDown && session.started));
   const remain = Math.max(0, session.goalMs - session.grownMs);
   const s = Math.ceil(remain / 1000);
   $('timer').textContent = `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`;
   $('bar-fill').style.width = (p * 100).toFixed(1) + '%';
 
   if (!session.started) {
-    $('grow-status').textContent = '폰을 화면이 바닥을 향하게 엎어주세요';
+    $('grow-status').textContent = '화면은 끄지 말고 그대로 엎어주세요. 엎으면 화면이 알아서 까매져요';
   } else if (faceDown) {
-    $('grow-status').textContent = '자라는 중… 화면을 꺼도 괜찮아요 🌿';
+    $('grow-status').textContent = '자라는 중… 🌿';
   } else {
     $('grow-status').textContent = '폰을 들었어요!';
   }
@@ -168,6 +190,7 @@ document.addEventListener('visibilitychange', () => {
     session.hiddenFaceDown = faceDown && session.started;
     Store.saveSession(session);
   } else {
+    keepAwake();
     resumeFromHidden();
   }
 });
@@ -184,7 +207,7 @@ function resumeFromHidden() {
     if (session.grownMs >= session.goalMs) return finish(true);
     // 다시 켰다는 건 폰을 봤다는 뜻이라, 다시 엎을 시간을 줘요
     faceDown = false;
-    session.graceUntil = Date.now() + GRACE_SECONDS * 1000;
+    session.graceUntil = Date.now() + RETURN_GRACE_SECONDS * 1000;
   } else if (wasStarted) {
     return finish(false);
   }
@@ -228,6 +251,7 @@ $('btn-home').addEventListener('click', goHome);
     window.addEventListener('deviceorientation', onOrientation);
     setTimeout(() => { if (!sensorWorks) $('sim').classList.remove('hidden'); }, 1500);
     tickTimer = setInterval(tick, 250);
+    keepAwake();
     resumeFromHidden();
   } else {
     goHome();

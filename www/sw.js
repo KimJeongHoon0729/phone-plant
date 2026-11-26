@@ -1,6 +1,5 @@
-// 한 번 열면 인터넷 없이도 앱이 열리도록 파일을 저장해 둬요.
-// 파일을 고친 뒤 배포할 때는 아래 버전 숫자를 올려주세요.
-const CACHE = 'phone-plant-v1';
+// 인터넷이 되면 항상 최신 파일을 받고, 안 되면 저장해 둔 파일로 열어요.
+const CACHE = 'phone-plant-v2';
 const FILES = ['./', 'index.html', 'style.css', 'plant.js', 'storage.js', 'app.js',
   'manifest.webmanifest', 'icons/icon.svg', 'icons/icon-192.png', 'icons/icon-512.png'];
 
@@ -14,5 +13,12 @@ self.addEventListener('activate', e => {
   self.clients.claim();
 });
 self.addEventListener('fetch', e => {
-  e.respondWith(caches.match(e.request).then(r => r || fetch(e.request)));
+  if (e.request.method !== 'GET') return;
+  e.respondWith(
+    fetch(e.request).then(res => {
+      const copy = res.clone();
+      caches.open(CACHE).then(c => c.put(e.request, copy));
+      return res;
+    }).catch(() => caches.match(e.request))
+  );
 });

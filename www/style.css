@@ -58,3 +58,6 @@ button { font: inherit; cursor: pointer; }
 .history .min { color: var(--accent); font-weight: 700; }
 .history .sub { color: var(--muted); font-size: 13px; }
 .history .empty { justify-content: center; color: var(--muted); }
+
+/* 엎어둔 동안 화면을 까맣게 */
+.dim { position: fixed; inset: 0; background: #000; z-index: 100; }
