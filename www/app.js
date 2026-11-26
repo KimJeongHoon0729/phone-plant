@@ -13,6 +13,11 @@ let sensorWorks = false;
 let tickTimer = null;
 let wakeLock = null;
 
+// 화면에 보이는 식물 상태 (실제 값을 부드럽게 따라가요 → 애니메이션처럼 보임)
+const shown = { g: 0, w: 0 };
+const target = { g: 0, w: 0 };
+let lastLeafDrop = 0;
+
 // ---------- 화면 켜둠 유지 ----------
 // 웹앱은 화면이 꺼지면 센서와 타이머가 멈춰요. 그래서 키우는 동안은 화면이 자동으로
 // 꺼지지 않게 하고, 대신 엎어두면 화면을 까맣게 바꿔서 배터리를 아껴요.
@@ -36,6 +41,7 @@ function show(name) {
 
 function goHome() {
   $('today-minutes').textContent = Store.todayMinutes();
+  drawPlant($('plant-home'), 0.5, 0);
   show('home');
 }
 
@@ -90,6 +96,7 @@ function startSession() {
     graceUntil: null,
   };
   Store.saveSession(session);
+  shown.g = target.g = 0; shown.w = target.w = 0;
   show('grow');
   keepAwake();
   render();
@@ -105,6 +112,7 @@ function setFaceDown(v) {
     session.started = true;
     session.graceUntil = null;
   } else if (session.started) {
+    session.graceStart = Date.now();
     session.graceUntil = Date.now() + GRACE_SECONDS * 1000;
     if (navigator.vibrate) navigator.vibrate(200);
   }
@@ -131,7 +139,16 @@ function finish(success) {
   Store.addResult(success ? session.goalMin : minutes, success);
   Store.clearSession();
 
-  drawPlant($('plant-result'), session.grownMs / session.goalMs, !success);
+  const resultSvg = $('plant-result');
+  resultSvg._ready = false;  // 새로 그려서 꽃 피는 애니메이션이 처음부터 나오게
+  $('screen-result').classList.toggle('bloom', success);
+  if (success) {
+    drawPlant(resultSvg, 1, 0, { pop: true });
+    setTimeout(() => celebrate($('fx')), 300);
+    if (navigator.vibrate) navigator.vibrate([80, 60, 80]);
+  } else {
+    drawPlant(resultSvg, Math.max(shown.g, 0.3), 1, { dead: true });
+  }
   if (success) {
     $('result-title').textContent = '꽃이 피었어요! 🌸';
     $('result-text').textContent = `${session.goalMin}분 동안 폰을 내려놓았어요.`;
@@ -146,7 +163,11 @@ function finish(success) {
 function render() {
   if (!session) return;
   const p = session.grownMs / session.goalMs;
-  drawPlant($('plant'), p, false);
+  target.g = p;
+  // 폰을 든 동안: 남은 시간이 줄어들수록 점점 시들어요
+  target.w = session.graceUntil
+    ? clamp01((Date.now() - (session.graceStart || Date.now())) / (session.graceUntil - (session.graceStart || Date.now() - 1))) * 0.95
+    : 0;
   // 엎어져 있는 동안은 화면을 까맣게 (OLED 화면 배터리 절약)
   $('dim').classList.toggle('hidden', !(faceDown && session.started));
   const remain = Math.max(0, session.goalMs - session.grownMs);
@@ -178,6 +199,23 @@ $('btn-giveup').addEventListener('click', () => {
   if (session && confirm('그만두면 식물이 시들어요. 그만둘까요?')) finish(false);
 });
 
+// ---------- 식물 애니메이션 ----------
+// 1초에 60번 정도, 보이는 식물을 실제 상태 쪽으로 조금씩 움직여요
+function animate(now) {
+  if (session && $('screen-grow').classList.contains('active')) {
+    shown.g += (target.g - shown.g) * 0.06;
+    shown.w += (target.w - shown.w) * (target.w > shown.w ? 0.12 : 0.05);
+    drawPlant($('plant'), shown.g, shown.w);
+    // 많이 시들면 잎이 한 장씩 떨어져요
+    if (shown.w > 0.3 && shown.g > 0.15 && now - lastLeafDrop > 700) {
+      lastLeafDrop = now;
+      dropLeaf($('grow-stage'));
+    }
+  }
+  requestAnimationFrame(animate);
+}
+requestAnimationFrame(animate);
+
 // ---------- 화면 꺼짐 / 다른 앱으로 이동 ----------
 // 웹앱은 화면이 꺼지면 멈춰요. 그래서 꺼질 때 상태를 저장하고, 다시 켜질 때 계산해요.
 // - 엎어둔 상태에서 꺼짐 → 꺼져 있던 시간도 자란 시간으로 쳐요
@@ -207,6 +245,7 @@ function resumeFromHidden() {
     if (session.grownMs >= session.goalMs) return finish(true);
     // 다시 켰다는 건 폰을 봤다는 뜻이라, 다시 엎을 시간을 줘요
     faceDown = false;
+    session.graceStart = Date.now();
     session.graceUntil = Date.now() + RETURN_GRACE_SECONDS * 1000;
   } else if (wasStarted) {
     return finish(false);

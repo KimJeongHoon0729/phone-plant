@@ -1,63 +1,123 @@
+/* ===== A. 크림 파스텔 ===== */
 :root {
-  --bg: #12261c;
-  --card: #1f3b2d;
-  --text: #eef5ef;
-  --muted: #a7c0ae;
-  --accent: #7ed49b;
-  --danger: #e88a7a;
+  --bg: #FFF7EE;
+  --card: #FFFFFF;
+  --line: #F3E3D8;
+  --text: #5B4A42;
+  --muted: #A8968B;
+  --peach: #F29E8E;
+  --peach-soft: #FBD9CF;
+  --sage: #8CC69A;
+  --danger: #E0796A;
 }
 * { box-sizing: border-box; }
 html, body { margin: 0; height: 100%; }
 body {
   background: var(--bg);
   color: var(--text);
-  font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+  font-family: 'Gowun Dodum', -apple-system, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
   -webkit-tap-highlight-color: transparent;
+  overflow-x: hidden;
 }
-#app { max-width: 420px; margin: 0 auto; padding: max(24px, env(safe-area-inset-top)) 16px 24px; min-height: 100%; }
-.screen { display: none; flex-direction: column; align-items: center; text-align: center; gap: 14px; }
-.screen.active { display: flex; }
-h1 { font-size: 28px; margin: 16px 0 0; }
-h2 { font-size: 22px; margin: 16px 0 0; }
-.lead { color: var(--muted); line-height: 1.6; margin: 0; }
-.label { color: var(--muted); margin: 8px 0 0; font-size: 14px; }
+#app { max-width: 420px; margin: 0 auto; padding: max(28px, env(safe-area-inset-top)) 20px 28px; min-height: 100%; }
+.screen { display: none; flex-direction: column; align-items: center; text-align: center; gap: 12px; }
+.screen.active { display: flex; animation: fadeIn .35s ease; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
 
-.today { background: var(--card); border-radius: 20px; padding: 20px 32px; margin: 8px 0; }
-.today-num { font-size: 44px; font-weight: 700; color: var(--accent); }
-.today-label { color: var(--muted); font-size: 14px; }
+h1 { font-size: 30px; font-weight: 400; margin: 12px 0 0; letter-spacing: 1px; }
+h2 { font-size: 24px; font-weight: 400; margin: 12px 0 0; }
+.lead { color: var(--muted); line-height: 1.6; margin: 0; font-size: 15px; }
+.label { color: var(--muted); margin: 4px 0 0; font-size: 14px; }
+
+.today {
+  background: var(--card); border-radius: 24px; padding: 16px 36px; margin: 10px 0 0;
+  box-shadow: 0 8px 24px rgba(242, 158, 142, .16);
+}
+.today-num { font-size: 42px; color: var(--peach); line-height: 1.2; }
+.today-label { color: var(--muted); font-size: 13px; }
+.plant-home { width: 150px; height: 180px; }
 
 .goals { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
 .goals button {
-  background: var(--card); color: var(--text); border: 2px solid transparent;
-  border-radius: 999px; padding: 10px 16px; font-size: 16px;
+  background: var(--card); color: var(--text); border: 1.5px solid var(--line);
+  border-radius: 999px; padding: 9px 16px; font-size: 15px; transition: all .2s;
 }
-.goals button.selected { border-color: var(--accent); color: var(--accent); }
+.goals button.selected { background: var(--peach-soft); border-color: var(--peach); }
 
 button { font: inherit; cursor: pointer; }
 .primary {
-  width: 100%; background: var(--accent); color: #0d2016; border: 0;
-  border-radius: 16px; padding: 16px; font-size: 18px; font-weight: 700; margin-top: 8px;
+  width: 100%; background: var(--sage); color: #fff; border: 0;
+  border-radius: 20px; padding: 17px; font-size: 18px; margin-top: 10px;
+  box-shadow: 0 8px 20px rgba(140, 198, 154, .35); transition: transform .1s;
 }
-.link { background: none; border: 0; color: var(--muted); padding: 8px; font-size: 15px; text-decoration: underline; }
+.primary:active { transform: scale(.97); }
+.link { background: none; border: 0; color: var(--muted); padding: 8px; font-size: 14px; text-decoration: underline; text-underline-offset: 3px; }
 .danger { color: var(--danger); }
 
-.status { font-size: 17px; min-height: 2.6em; margin: 8px 0 0; }
-#plant, #plant-result { width: 220px; height: 264px; }
-.timer { font-size: 48px; font-variant-numeric: tabular-nums; font-weight: 700; }
-.bar { width: 100%; height: 10px; background: var(--card); border-radius: 999px; overflow: hidden; }
-#bar-fill { height: 100%; width: 0; background: var(--accent); transition: width .5s; }
-.grace { color: var(--danger); font-weight: 700; font-size: 18px; margin: 0; }
+.status { font-size: 16px; min-height: 2.8em; margin: 8px 0 0; color: var(--muted); line-height: 1.5; }
+.stage { position: relative; width: 240px; height: 288px; }
+.stage svg { width: 100%; height: 100%; overflow: visible; }
+.timer { font-size: 46px; font-variant-numeric: tabular-nums; letter-spacing: 1px; }
+.bar { width: 100%; height: 9px; background: var(--line); border-radius: 999px; overflow: hidden; }
+#bar-fill { height: 100%; width: 0; background: linear-gradient(90deg, var(--sage), var(--peach)); border-radius: 999px; transition: width .5s; }
+.grace { color: var(--danger); font-size: 17px; margin: 0; animation: pulse 1s ease-in-out infinite; }
+@keyframes pulse { 50% { opacity: .55; } }
 .hidden { display: none !important; }
 
-.sim { background: var(--card); border-radius: 12px; padding: 12px; font-size: 14px; color: var(--muted); }
+/* 식물이 바람에 살랑살랑 */
+.sway { transform-box: view-box; transform-origin: 100px 180px; animation: sway 4s ease-in-out infinite; }
+.sway.still { animation: none; }
+@keyframes sway { 0%, 100% { transform: rotate(-2deg); } 50% { transform: rotate(2deg); } }
+
+/* 다 자랐을 때 후광이 숨쉬듯 */
+.halo { transform-box: fill-box; transform-origin: center; animation: halo 2.4s ease-in-out infinite; }
+@keyframes halo { 0%, 100% { transform: scale(.9); opacity: .7; } 50% { transform: scale(1.1); opacity: 1; } }
+
+/* 꽃이 톡 하고 피어나는 효과 */
+.pop { transform-box: fill-box; transform-origin: center; animation: pop .9s cubic-bezier(.3, 1.6, .5, 1) both; }
+.pop-1 { animation-delay: .35s; }
+.pop-2 { animation-delay: .55s; }
+@keyframes pop { 0% { transform: scale(0) rotate(-90deg); } 100% { transform: scale(1) rotate(0); } }
+
+/* 반짝이 */
+.sparkles { position: absolute; inset: 0; pointer-events: none; display: none; }
+.bloom .sparkles { display: block; }
+.sparkles i { position: absolute; font-style: normal; color: #FFC94D; font-size: 20px; opacity: 0; animation: twinkle 1.8s ease-in-out infinite; }
+.sparkles i:nth-child(1) { left: 12%; top: 10%; animation-delay: .2s; }
+.sparkles i:nth-child(2) { left: 80%; top: 6%; animation-delay: .6s; font-size: 16px; }
+.sparkles i:nth-child(3) { left: 88%; top: 38%; animation-delay: 1s; }
+.sparkles i:nth-child(4) { left: 4%; top: 42%; animation-delay: 1.3s; font-size: 14px; }
+.sparkles i:nth-child(5) { left: 48%; top: -4%; animation-delay: .9s; font-size: 24px; }
+.sparkles i:nth-child(6) { left: 70%; top: 52%; animation-delay: .4s; font-size: 13px; }
+@keyframes twinkle { 0%, 100% { opacity: 0; transform: scale(.4) rotate(0); } 50% { opacity: 1; transform: scale(1.2) rotate(45deg); } }
+.bloom h2 { animation: bounceIn .8s cubic-bezier(.3, 1.6, .5, 1) both; color: var(--peach); font-size: 28px; }
+@keyframes bounceIn { 0% { transform: scale(.3); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+
+/* 떨어지는 잎 */
+.falling-leaf { position: absolute; pointer-events: none; animation: leafFall 2.2s ease-in forwards; }
+@keyframes leafFall {
+  0% { transform: translate(0, 0) rotate(0); opacity: 1; }
+  100% { transform: translate(var(--drift), 170px) rotate(260deg); opacity: 0; }
+}
+
+/* 꽃가루 축하 */
+.fx { position: fixed; inset: 0; pointer-events: none; overflow: hidden; z-index: 50; }
+.confetti { position: absolute; top: -20px; width: 10px; height: 14px; border-radius: 50% 50% 50% 0; animation: confetti linear forwards; }
+@keyframes confetti { to { transform: translate(var(--drift), 110vh) rotate(var(--spin)); } }
+
+.sim { background: var(--card); border-radius: 14px; padding: 12px; font-size: 13px; color: var(--muted); }
 .sim p { margin: 0 0 8px; }
-.sim button { background: var(--bg); color: var(--text); border: 1px solid var(--muted); border-radius: 8px; padding: 8px 12px; }
+.sim button { background: var(--bg); color: var(--text); border: 1px solid var(--line); border-radius: 10px; padding: 8px 12px; }
 
 .history { list-style: none; padding: 0; margin: 0; width: 100%; }
-.history li { display: flex; justify-content: space-between; background: var(--card); border-radius: 12px; padding: 14px 16px; margin-bottom: 8px; }
-.history .min { color: var(--accent); font-weight: 700; }
+.history li { display: flex; justify-content: space-between; align-items: center; background: var(--card); border-radius: 16px; padding: 14px 18px; margin-bottom: 8px; box-shadow: 0 4px 14px rgba(242, 158, 142, .1); }
+.history .min { color: var(--peach); font-size: 20px; }
 .history .sub { color: var(--muted); font-size: 13px; }
 .history .empty { justify-content: center; color: var(--muted); }
 
 /* 엎어둔 동안 화면을 까맣게 */
 .dim { position: fixed; inset: 0; background: #000; z-index: 100; }
+
+@media (prefers-reduced-motion: reduce) {
+  .sway, .halo, .pop, .sparkles i, .grace { animation: none !important; }
+}

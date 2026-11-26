@@ -3,24 +3,29 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#1f3b2d">
+  <meta name="theme-color" content="#FFF7EE">
   <title>폰 키우기</title>
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <main id="app">
     <!-- 시작 화면 -->
     <section id="screen-home" class="screen active">
-      <h1>폰 키우기 🌱</h1>
-      <p class="lead">폰을 엎어두면 식물이 자라요.<br>중간에 집어 들면 시들어요.</p>
+      <h1>폰 키우기</h1>
+      <p class="lead">내려놓은 만큼 자라는 나의 작은 정원</p>
 
       <div class="today">
         <div class="today-num" id="today-minutes">0</div>
         <div class="today-label">오늘 키운 시간(분)</div>
       </div>
+
+      <svg id="plant-home" class="plant-home"></svg>
 
       <p class="label">목표 시간</p>
       <div class="goals" id="goals">
@@ -30,14 +35,16 @@
         <button data-min="60">60분</button>
       </div>
 
-      <button id="btn-start" class="primary">시작하기</button>
+      <button id="btn-start" class="primary">씨앗 심기</button>
       <button id="btn-history" class="link">기록 보기</button>
     </section>
 
     <!-- 진행 화면 -->
     <section id="screen-grow" class="screen">
       <p id="grow-status" class="status">폰을 화면이 바닥을 향하게 엎어주세요</p>
-      <svg id="plant" viewBox="0 0 200 240" aria-label="식물"></svg>
+      <div class="stage" id="grow-stage">
+        <svg id="plant" aria-label="식물"></svg>
+      </div>
       <div id="timer" class="timer">00:00</div>
       <div class="bar"><div id="bar-fill"></div></div>
       <p id="grace" class="grace hidden"></p>
@@ -53,7 +60,10 @@
     <!-- 결과 화면 -->
     <section id="screen-result" class="screen">
       <h2 id="result-title"></h2>
-      <svg id="plant-result" viewBox="0 0 200 240"></svg>
+      <div class="stage" id="result-stage">
+        <svg id="plant-result"></svg>
+        <div class="sparkles"><i>✦</i><i>✧</i><i>✦</i><i>✧</i><i>✦</i><i>✧</i></div>
+      </div>
       <p id="result-text" class="lead"></p>
       <button id="btn-again" class="primary">다시 키우기</button>
       <button id="btn-home" class="link">처음으로</button>
@@ -69,6 +79,7 @@
   </main>
 
   <div id="dim" class="dim hidden"></div>
+  <div id="fx" class="fx"></div>
 
   <script src="plant.js"></script>
   <script src="storage.js"></script>
