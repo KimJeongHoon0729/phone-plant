@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#1f3b2d">
+  <title>폰 키우기</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main id="app">
+    <!-- 시작 화면 -->
+    <section id="screen-home" class="screen active">
+      <h1>폰 키우기 🌱</h1>
+      <p class="lead">폰을 엎어두면 식물이 자라요.<br>중간에 집어 들면 시들어요.</p>
+
+      <div class="today">
+        <div class="today-num" id="today-minutes">0</div>
+        <div class="today-label">오늘 키운 시간(분)</div>
+      </div>
+
+      <p class="label">목표 시간</p>
+      <div class="goals" id="goals">
+        <button data-min="1">1분</button>
+        <button data-min="15">15분</button>
+        <button data-min="30" class="selected">30분</button>
+        <button data-min="60">60분</button>
+      </div>
+
+      <button id="btn-start" class="primary">시작하기</button>
+      <button id="btn-history" class="link">기록 보기</button>
+    </section>
+
+    <!-- 진행 화면 -->
+    <section id="screen-grow" class="screen">
+      <p id="grow-status" class="status">폰을 화면이 바닥을 향하게 엎어주세요</p>
+      <svg id="plant" viewBox="0 0 200 240" aria-label="식물"></svg>
+      <div id="timer" class="timer">00:00</div>
+      <div class="bar"><div id="bar-fill"></div></div>
+      <p id="grace" class="grace hidden"></p>
+
+      <div id="sim" class="sim hidden">
+        <p>이 기기에는 기울기 센서가 없어요 (테스트 모드)</p>
+        <button id="btn-sim">엎어두기 / 들기 전환</button>
+      </div>
+
+      <button id="btn-giveup" class="link">그만두기</button>
+    </section>
+
+    <!-- 결과 화면 -->
+    <section id="screen-result" class="screen">
+      <h2 id="result-title"></h2>
+      <svg id="plant-result" viewBox="0 0 200 240"></svg>
+      <p id="result-text" class="lead"></p>
+      <button id="btn-again" class="primary">다시 키우기</button>
+      <button id="btn-home" class="link">처음으로</button>
+    </section>
+
+    <!-- 기록 화면 -->
+    <section id="screen-history" class="screen">
+      <h2>기록</h2>
+      <ul id="history-list" class="history"></ul>
+      <button id="btn-back" class="primary">돌아가기</button>
+      <button id="btn-reset" class="link danger">기록 모두 지우기</button>
+    </section>
+  </main>
+
+  <script src="plant.js"></script>
+  <script src="storage.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

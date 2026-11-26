@@ -1,0 +1,19 @@
+{
+  "name": "phone-plant",
+  "version": "0.1.0",
+  "private": true,
+  "description": "폰을 엎어두면 식물이 자라는 디지털 디톡스 웹앱",
+  "scripts": {
+    "start": "npx --yes serve www",
+    "android:add": "npx cap add android",
+    "android:sync": "npx cap sync android",
+    "android:open": "npx cap open android"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^7.0.0"
+  },
+  "dependencies": {
+    "@capacitor/core": "^7.0.0",
+    "@capacitor/android": "^7.0.0"
+  }
+}
