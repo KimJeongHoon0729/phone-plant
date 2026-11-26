@@ -34,6 +34,12 @@
         <button data-min="15">15분</button>
         <button data-min="30" class="selected">30분</button>
         <button data-min="60">60분</button>
+        <button data-min="custom" id="chip-custom">직접 입력</button>
+      </div>
+      <div id="custom-row" class="custom-row hidden">
+        <input id="custom-min" type="number" inputmode="numeric" min="1" max="300" placeholder="45">
+        <span>분</span>
+        <small>1~300분</small>
       </div>
 
       <button id="btn-start" class="primary">씨앗 심기</button>

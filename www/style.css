@@ -44,6 +44,18 @@ h2 { font-size: 24px; font-weight: 400; margin: 12px 0 0; }
 }
 .goals button.selected { background: var(--peach-soft); border-color: var(--peach); }
 
+/* 목표 시간 직접 입력 */
+.custom-row { display: flex; align-items: center; gap: 8px; animation: fadeIn .25s ease; }
+.custom-row input {
+  width: 90px; font: inherit; font-size: 22px; text-align: center; color: var(--text);
+  background: var(--card); border: 1.5px solid var(--peach); border-radius: 14px; padding: 8px 10px; outline: none;
+}
+.custom-row input:focus { box-shadow: 0 0 0 4px var(--peach-soft); }
+.custom-row span { font-size: 17px; }
+.custom-row small { color: var(--muted); font-size: 12px; margin-left: 4px; }
+.custom-row.error input { border-color: var(--danger); animation: shake .3s; }
+@keyframes shake { 25% { transform: translateX(-4px); } 75% { transform: translateX(4px); } }
+
 button { font: inherit; cursor: pointer; }
 .primary {
   width: 100%; background: var(--sage); color: #fff; border: 0;

@@ -51,8 +51,33 @@ $('goals').addEventListener('click', e => {
   if (!btn) return;
   document.querySelectorAll('#goals button').forEach(b => b.classList.remove('selected'));
   btn.classList.add('selected');
-  goalMin = Number(btn.dataset.min);
+  if (btn.dataset.min === 'custom') {
+    // 직접 입력: 입력칸을 보여주고, 지난번에 쓴 값을 채워둬요
+    $('custom-row').classList.remove('hidden');
+    try { const last = localStorage.getItem('phonePlant.customMin'); if (last && !$('custom-min').value) $('custom-min').value = last; } catch (e) {}
+    $('custom-min').focus();
+    goalMin = null;
+    readCustom();
+  } else {
+    $('custom-row').classList.add('hidden');
+    goalMin = Number(btn.dataset.min);
+  }
 });
+
+// 직접 입력한 값을 확인해요 (1~300분 정수만)
+function readCustom() {
+  const v = Math.round(Number($('custom-min').value));
+  if (v >= 1 && v <= 300) {
+    goalMin = v;
+    $('custom-row').classList.remove('error');
+    try { localStorage.setItem('phonePlant.customMin', String(v)); } catch (e) {}
+    return true;
+  }
+  goalMin = null;
+  return false;
+}
+$('custom-min').addEventListener('input', readCustom);
+$('custom-min').addEventListener('keydown', e => { if (e.key === 'Enter') e.target.blur(); });
 
 // ---------- 기울기 센서 ----------
 // 폰이 화면을 바닥으로 향하면 beta 값이 ±180 근처가 돼요.
@@ -192,6 +217,12 @@ function render() {
 }
 
 $('btn-start').addEventListener('click', async () => {
+  if (!goalMin) {
+    const row = $('custom-row');
+    row.classList.remove('error'); void row.offsetWidth; row.classList.add('error');
+    $('custom-min').focus();
+    return;
+  }
   await startSensor();
   startSession();
 });
