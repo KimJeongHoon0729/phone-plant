@@ -1,6 +1,6 @@
 {
-  "name": "폰 키우기",
-  "short_name": "폰 키우기",
+  "name": "멍화분",
+  "short_name": "멍화분",
   "description": "폰을 엎어두면 식물이 자라는 디지털 디톡스 앱",
   "start_url": "./",
   "scope": "./",

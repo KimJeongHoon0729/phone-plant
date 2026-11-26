@@ -1,5 +1,5 @@
 // 인터넷이 되면 항상 최신 파일을 받고, 안 되면 저장해 둔 파일로 열어요.
-const CACHE = 'phone-plant-v4';
+const CACHE = 'phone-plant-v5';
 const FILES = ['./', 'index.html', 'style.css', 'plant.js', 'storage.js', 'app.js', 'install.js',
   'manifest.webmanifest', 'icons/icon.svg', 'icons/icon-192.png', 'icons/icon-512.png'];
 
